@@ -1,0 +1,153 @@
+<html>
+
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<!--Import materialize.css-->
+	<link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+	<style>
+	.nav-wrapper {
+		padding-left: 10px;
+	}
+	nav {
+		background: rgb(38, 166, 154);;
+	}
+	</style>
+</head>
+
+<body>
+	<nav>
+		<div class="nav-wrapper">
+			<a href="#" class="brand-logo">Materialize Twitch Panels</a>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col s6">
+				<form action="#">
+					<p class="range-field">
+						<label for="test5">Font Size</label>
+						<input type="range" id="test5" min="0" max="48" />
+
+					</p>
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="label" type="text" class="validate">
+							<label for="label">Panel Text</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="color" type="text" class="validate">
+							<label for="color">Panel Color</label>
+						</div>
+					</div>
+				</form>
+				<a href="#" class="waves-effect waves-light btn" id="btn-download" download="my-file-name.png">Download</a>
+			</div>
+			<div class="col s6">
+				<canvas id="myCanvas" width="320" height="200"></canvas>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="js/materialize.min.js"></script>
+<script>
+function drawBackground()
+{
+	var canvas = document.getElementById('myCanvas');
+	var context = canvas.getContext('2d');
+
+	context.save();
+	context.rect(4, 50, 312, 100);
+	context.fillStyle = $( "#color" ).val();
+	context.shadowColor = '#000000';
+	context.shadowBlur = 15;
+	context.shadowOffsetX = 0;
+	context.shadowOffsetY = 4;
+	context.fill();
+	context.restore();
+}
+
+function drawText()
+{
+	var canvas = document.getElementById('myCanvas');
+	var context = canvas.getContext('2d');
+
+	var x = canvas.width / 2;
+	var y = canvas.height / 2;
+
+	context.save();
+	console.log(String($( "#test5" ).val()) + 'pt Roboto');
+	context.font = String($( "#test5" ).val()) + 'pt Roboto';
+	context.textAlign = 'center';
+	context.textBaseline = 'middle';
+	context.fillStyle = 'white';
+	context.fillText($( "#label" ).val(), x, y);
+	context.restore();
+}
+
+function downloadPanel()
+{
+	var canvas = document.getElementById('myCanvas');
+	// draw to canvas...
+	canvas.toBlob(function(blob) {
+		saveAs(blob, "prettyimage.png");
+	});
+}
+
+function setupDownloads()
+{
+	var canvas = document.getElementById('myCanvas');
+	var button = document.getElementById('btn-download');
+	button.addEventListener('click', function (e) {
+		var dataURL = canvas.toDataURL('image/png');
+		button.href = dataURL;
+	});
+}
+
+function updateCanvas(color)
+{
+	var canvas = document.getElementById('myCanvas');
+	var context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	drawBackground();
+	drawText();
+}
+
+function setupForm()
+{
+	$( "#color" ).val("#7550ba");
+	$( "#test5" ).val("48");
+	$( "#label" ).val("About Me");
+
+	updateCanvas();
+
+	$( "#color" ).change(function() {
+		updateCanvas();
+	});
+	$( "#test5" ).change(function() {
+		updateCanvas();
+	});
+	$( "#label" ).change(function() {
+		updateCanvas();
+	});
+}
+
+$( document ).ready(function() {
+    console.log("Pageloaded");
+	updateCanvas();
+	setupForm();
+	setupDownloads();
+});
+
+</script>
+
+</html>
